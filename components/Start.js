@@ -60,7 +60,7 @@ export default class Start extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
         height: '45%',
