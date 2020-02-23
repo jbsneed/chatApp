@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, ImageBackground, TouchableOpacity, Text, TextInput, Button } from 'react-native';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 export default class Start extends React.Component {
     constructor(props) {
@@ -19,6 +20,8 @@ export default class Start extends React.Component {
                 <Text style={styles.title}>Chat App</Text>
                 <View style={styles.container}>
                     <TextInput
+                        accessible={true}
+                        accessibilityLabel="Enter Name"
                         style={styles.nameBox}
                         onChangeText={(name) => this.setState({ name })}
                         value={this.state.name}
@@ -44,10 +47,13 @@ export default class Start extends React.Component {
                         />
                     </View>
                     <Button
+                        accessible={true}
+                        accessibilityLabel="lets you start chatting with the entered name"
                         style={styles.button}
                         title="Start Chatting!"
                         onPress={() => this.props.navigation.navigate('Chat', { name: this.state.name, color: this.state.color })}
                     />
+                    <KeyboardSpacer />
                 </View>
             </ImageBackground>
 
