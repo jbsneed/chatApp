@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { View } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
-import firebase from 'firebase';
-import 'firebase/firestore';
+
+const firebase = require('firebase');
+require('firebase/firestore');
 
 export default class Chat extends React.Component {
     // creation of the state object
@@ -49,7 +50,17 @@ export default class Chat extends React.Component {
     //each element of the UI displayed on screen right away using the setState() function
 
     componentDidMount() {
-        firebase.auth().onAuthStateChanged();
+        this.authUnsubscribe = firebase.auth().onAuthStateChanged(async user => {
+            if (!user) {
+                await firebase.auth().signInAnonymously();
+            }
+            //update user state with currently active user data
+            this.setState({
+                uid: user.uid,
+                loggedInText: 'Hello there',
+            });
+        });
+
         this.unsubscribe = this.referenceMessages.onSnapshot(this.onCollectionUpdate)
 
         this.setState({
