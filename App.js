@@ -5,7 +5,6 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 import Start from './components/Start';
 import Chat from './components/Chat';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 const navigator = createStackNavigator({
   Start: { screen: Start },
