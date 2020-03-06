@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import { View, AsyncStorage, StyleSheet, Text } from 'react-native';
+import { View, AsyncStorage, Text } from 'react-native';
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
-import NetInfo from '@react-native-community/netinfo';
 import CustomActions from './CustomActions';
-import MapView from 'react-native-maps';
-
+import NetInfo from '@react-native-community/netinfo';
 
 const firebase = require('firebase');
 require('firebase/firestore');
@@ -37,7 +35,7 @@ export default class Chat extends React.Component {
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
-
+        this.referenceChatUser = null;
         this.referenceMessages = firebase.firestore().collection('messages');
     }
 
@@ -50,54 +48,49 @@ export default class Chat extends React.Component {
     //each element of the UI displayed on screen right away using the setState() function
 
     componentDidMount() {
-        NetInfo.addEventListener(state => {
-            this.handleConnectivityChange(state)
+        const unsubscribe = NetInfo.addEventListener(state => {
+            console.log('Connection type', state.type);
+            console.log('Is connected?', state.isConnected);
         });
-        NetInfo.fetch().then(state => {
-            const isConnected = state.isConnected;
+        unsubscribe();
+
+        NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
-                this.setState({
-                    isConnected: true,
-                }),
-
-                    this.authUnsubscribe = firebase.auth().onAuthStateChanged(async user => {
-                        if (!user) {
+                this.authUnsubscribe = firebase.auth().onAuthStateChanged(async user => {
+                    if (!user) {
+                        try {
                             await firebase.auth().signInAnonymously();
+                        } catch (error) {
+                            console.log(error)
                         }
-                        this.setState({
-                            uid: user.uid,
-                            messages: []
-                        });
-
-                        this.unsubscribe = this.referenceMessages.orderBy('createdAt', 'desc').onSnapshot(this.onCollectionUpdate);
+                    }
+                    this.setState({
+                        uid: user.uid,
+                        loggedInText: 'Welcome!',
+                        isConnected: true,
+                        user: {
+                            _id: user.uid,
+                            name: this.props.navigation.state.params.name,
+                        },
                     });
+                    this.referenceChatUser = firebase.firestore()
+                        .collection('messages')
+                        .orderBy('createdAt', 'desc')
+                    this.unsubscribeChatUser = this.referenceChatUser.onSnapshot(this.onCollectionUpdate);
+                });
             } else {
+                this.getMessages();
                 this.setState({
                     isConnected: false,
                 });
-                this.getMessages();
             }
-        })
+        });
     }
 
     componentWillUnmount() {
-        this.authUnsubscribe();
         this.unsubscribe();
+        this.unsubscribeChatUser();
     }
-
-    handleConnectivityChange = (state) => {
-        const isConnected = state.isConnected;
-        if (isConnected === true) {
-            this.setState({
-                isConnected: true
-            });
-            this.unsubscribe = this.referenceMessages.orderBy('createdAt', 'desc').onSnapshot(this.onCollectionUpdate);
-        } else {
-            this.setState({
-                isConnected: false
-            });
-        }
-    };
 
     onCollectionUpdate = (querySnapshot) => {
         const messages = [];
@@ -137,6 +130,7 @@ export default class Chat extends React.Component {
             text: message.text || '',
             createdAt: message.createdAt,
             user: message.user,
+            uid: this.state.uid,
             image: message.image || null,
             location: message.location || null,
         });
@@ -200,23 +194,8 @@ export default class Chat extends React.Component {
         return <CustomActions {...props} />;
     };
 
-    renderCustomView(props) {
-        const { currentMessage } = props;
-        if (currentMessage.location) {
-            return (
-                <MapView
-                    style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
-                    region={{
-                        latitude: currentMessage.location.latitude,
-                        longitude: currentMessage.location.longitude,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
-                    }}
-                />
-            );
-        }
-        return null;
-    }
+
+
 
     render() {
         return (
@@ -226,13 +205,10 @@ export default class Chat extends React.Component {
                     renderBubble={this.renderBubble.bind(this)}
                     renderInputToolbar={this.renderInputToolbar.bind(this)}
                     renderActions={this.renderCustomActions}
-                    renderCustomView={this.renderCustomView}
                     messages={this.state.messages}
                     isConnected={this.state.isConnected}
                     onSend={messages => this.onSend(messages)}
-                    user={{
-                        _id: this.state.uid
-                    }}
+                    user={this.state.user}
                 />
                 <KeyboardSpacer />
             </View>
