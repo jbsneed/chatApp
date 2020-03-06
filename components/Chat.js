@@ -8,7 +8,7 @@ import NetInfo from '@react-native-community/netinfo';
 const firebase = require('firebase');
 require('firebase/firestore');
 
-export default class Chat extends React.Component {
+export default class Chat extends Component {
     // creation of the state object
     //app needs to send, receive, and display messages, so it makes sense to add messages into the state object
 
@@ -48,12 +48,6 @@ export default class Chat extends React.Component {
     //each element of the UI displayed on screen right away using the setState() function
 
     componentDidMount() {
-        const unsubscribe = NetInfo.addEventListener(state => {
-            console.log('Connection type', state.type);
-            console.log('Is connected?', state.isConnected);
-        });
-        unsubscribe();
-
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
                 this.authUnsubscribe = firebase.auth().onAuthStateChanged(async user => {
@@ -72,11 +66,12 @@ export default class Chat extends React.Component {
                             _id: user.uid,
                             name: this.props.navigation.state.params.name,
                         },
+                        messages: []
                     });
                     this.referenceChatUser = firebase.firestore()
                         .collection('messages')
                         .orderBy('createdAt', 'desc')
-                    this.unsubscribeChatUser = this.referenceChatUser.onSnapshot(this.onCollectionUpdate);
+                    this.unsubscribe = this.referenceChatUser.onSnapshot(this.onCollectionUpdate);
                 });
             } else {
                 this.getMessages();
@@ -89,7 +84,7 @@ export default class Chat extends React.Component {
 
     componentWillUnmount() {
         this.unsubscribe();
-        this.unsubscribeChatUser();
+        this.authUnsubscribe();
     }
 
     onCollectionUpdate = (querySnapshot) => {
