@@ -60,7 +60,7 @@ export default class Chat extends Component {
                     }
                     this.setState({
                         uid: user.uid,
-                        loggedInText: 'Welcome!',
+                        loggedInText: 'Welcome to chat!',
                         isConnected: true,
                         user: {
                             _id: user.uid,
@@ -194,7 +194,7 @@ export default class Chat extends Component {
 
     render() {
         return (
-            <View style={{ flex: 1, backgroundColor: this.props.navigation.state.params.color, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ flex: 1, backgroundColor: this.props.navigation.state.params.color }}>
                 <Text>{this.state.loggedInText}</Text>
                 <GiftedChat
                     renderBubble={this.renderBubble.bind(this)}
@@ -205,7 +205,7 @@ export default class Chat extends Component {
                     onSend={messages => this.onSend(messages)}
                     user={this.state.user}
                 />
-                <KeyboardSpacer />
+                {Platform.OS === "android" ? <KeyboardSpacer /> : null}
             </View>
         );
     }
