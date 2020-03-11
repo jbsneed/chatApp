@@ -16,100 +16,99 @@ export default class CustomActions extends React.Component {
 
     //requests permission to camera roll and allows access to images from library
     pickImage = async () => {
-        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        try {
+            const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
-        if (status === 'granted') {
-            try {
+            if (status === 'granted') {
                 let result = await ImagePicker.launchImageLibraryAsync({
-                    mediaTypes: 'Images',
-                });
-            } catch (error) {
-                console.log(error);
-            }
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                }).catch(error => console.log(error));
 
-            if (!result.cancelled) {
-                try {
-                    const imageUrlLink = await this.uploadImage(result.uri);
-                    this.props.onSend({ image: imageUrlLink });
-                } catch (error) {
-                    console.log(error);
+                if (!result.cancelled) {
+                    const imageUrl = await this.uploadImage(result.uri);
+                    this.props.onSend({ image: imageUrl })
                 }
             }
+        } catch (error) {
+            console.log(error.message)
         }
     }
 
     //requests permission to camera and camera roll and store photo as state and return uri string
     takePhoto = async () => {
-        const { status } = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL)
+        try {
+            const { status } = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL)
 
-        if (status === 'greanted') {
-            try {
+            if (status === 'granted') {
+
                 let result = await ImagePicker.launchCameraAsync({
-                    mediaTypes: 'Images',
-                });
-            } catch (error) {
-                console.log(error);
-            }
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                }).catch(error => console.log(error));
 
-            if (!result.cancelled) {
-                try {
+                if (!result.cancelled) {
                     const imageUrlLink = await this.uploadImage(result.uri);
                     this.props.onSend({ image: imageUrlLink });
-                } catch (error) {
-                    console.log(error);
                 }
             }
+        } catch (error) {
+            console.log(error.message)
         }
     }
 
     //uploads image as blob to cloud storage
     uploadImage = async (uri) => {
-        const blob = await new Promise((resolve, reject) => {
-            const xhr = new XMLHttypRequest();
-            xhr.onload = (() => {
-                resolve(xhr.response);
+        try {
+            const blob = await new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.onload = (() => {
+                    resolve(xhr.response);
+                });
+                xhr.onerror = ((e) => {
+                    console.log(e);
+                    reject(new TypeError('Network Request Failed'));
+                });
+                xhr.responseType = 'blob';
+                xhr.open('GET', uri, true);
+                xhr.send(null);
             });
-            xhr.onerror = ((e) => {
-                console.log(e);
-                reject(new TypeError('Network Request Failed'));
-            });
-            xhr.responseType = 'blob';
-            xhr.open('GET', uri, true);
-            xhr.send(null);
-        });
-        const getImageName = uri.split('/');
-        const imageArrayLength = getImageName.length - 1;
-        const ref = firebase.storage().ref().child(getImageName[imageArrayLength]);
-        console.log(ref, getImageName[imageArrayLength]);
-        const snapshot = await ref.put(blob);
+            const getImageName = uri.split('/');
+            const imageArrayLength = getImageName[getImageName.length - 1]
+            const ref = firebase.storage().ref().child('images/' + imageArrayLength);
+            console.log(ref, getImageName[imageArrayLength]);
+            const snapshot = await ref.put(blob);
 
-        blob.close();
+            blob.close();
 
-        const imageURL = await snapshot.ref.getDownloadURL();
-        return imageURL;
+            const imageURL = await snapshot.ref.getDownloadURL();
+            return imageURL;
+        } catch (error) {
+            console.log(error)
+        }
     }
-
     //requests permission fro location
     getLocation = async () => {
-        const { status } = await Permissions.askAsync(Permissions.LOCATION);
+        try {
+            const { status } = await Permissions.askAsync(Permissions.LOCATION);
 
-        if (status === 'granted') {
-            try {
-                const result = await Location.getCurrentPositionAsync({});
+            if (status === 'granted') {
+
+                const result = await Location.getCurrentPositionAsync({})
+                    .catch(error => console.log(error));
+                const longitude = JSON.stringify(result.coords.longitude);
+                const latitude = JSON.stringify(result.coords.latitude);
                 if (result) {
                     this.props.onSend({
                         location: {
-                            longitude: result.coords.longitude,
-                            latitude: result.coords.latitude,
-                        },
-                    });
+                            longitude,
+                            latitude
+                        }
+                    })
                 }
-            } catch (error) {
-                console.log(error);
             }
+        } catch (error) {
+            console.log(error)
         }
     }
-
     onActionPress = () => {
         const options = ['Choose From Library', 'Take Picture', 'Send Location', 'Cancel'];
         const cancelButtonIndex = options.length - 1;
@@ -121,14 +120,15 @@ export default class CustomActions extends React.Component {
             async (buttonIndex) => {
                 switch (buttonIndex) {
                     case 0:
-                        this.pickImage()
-                        return;
+                        console.log('user wants to select an image')
+                        return this.pickImage();
                     case 1:
-                        this.takePhoto()
-                        return;
+                        console.log('user wants to take a photo');
+                        return this.takePhoto();
+
                     case 2:
-                        this.getLocation()
-                        return;
+                        console.log('user wants to get their location');
+                        return this.getLocation();
                 }
             },
         );
@@ -152,7 +152,7 @@ export default class CustomActions extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    constainer: {
+    container: {
         width: 26,
         height: 26,
         marginLeft: 10,
