@@ -49,9 +49,13 @@ export default class Start extends React.Component {
                     <Button
                         accessible={true}
                         accessibilityLabel="lets you start chatting with the entered name"
+                        onPress={() => {
+                            this.props.navigation.navigate(
+                                'Chat', { name: this.state.name, color: this.state.color });
+                        }}
+                        title="Start Chatting"
+                        color='#757083'
                         style={styles.button}
-                        title="Start Chatting!"
-                        onPress={() => this.props.navigation.navigate('Chat', { name: this.state.name, color: this.state.color })}
                     />
                     <KeyboardSpacer />
                 </View>

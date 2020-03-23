@@ -22,19 +22,17 @@ export default class Chat extends Component {
             image: null
         };
 
-        var firebaseConfig = {
-            apiKey: "AIzaSyDUIBq-VdhxatFwL5KJcNbeaoXKecPqDeA",
-            authDomain: "chatapp-56989.firebaseapp.com",
-            databaseURL: "https://chatapp-56989.firebaseio.com",
-            projectId: "chatapp-56989",
-            storageBucket: "chatapp-56989.appspot.com",
-            messagingSenderId: "208111780679",
-            appId: "1:208111780679:web:0019318a5f3454bf1e4262",
-            measurementId: "G-WK8GKBEJVL"
-        };
-
         if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
+            firebase.initializeApp({
+                apiKey: "AIzaSyDUIBq-VdhxatFwL5KJcNbeaoXKecPqDeA",
+                authDomain: "chatapp-56989.firebaseapp.com",
+                databaseURL: "https://chatapp-56989.firebaseio.com",
+                projectId: "chatapp-56989",
+                storageBucket: "chatapp-56989.appspot.com",
+                messagingSenderId: "208111780679",
+                appId: "1:208111780679:web:0019318a5f3454bf1e4262",
+                measurementId: "G-WK8GKBEJVL"
+            });
         }
         this.referenceChatUser = null;
         this.referenceMessages = firebase.firestore().collection('messages');
