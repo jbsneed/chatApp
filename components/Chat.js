@@ -42,7 +42,7 @@ export default class Chat extends Component {
 
     static navigationOptions = ({ navigation }) => {
         return {
-            title: navigation.state.params.name,
+            title: `${navigation.state.params.name}'s Chat`,
         };
     };
 

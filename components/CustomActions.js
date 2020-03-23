@@ -73,7 +73,7 @@ export default class CustomActions extends React.Component {
             });
             const getImageName = uri.split('/');
             const imageArrayLength = getImageName[getImageName.length - 1]
-            const ref = firebase.storage().ref().child('images/' + imageArrayLength);
+            const ref = firebase.storage().ref().child(`images/${imageArrayLength}`);
             console.log(ref, getImageName[imageArrayLength]);
             const snapshot = await ref.put(blob);
 
