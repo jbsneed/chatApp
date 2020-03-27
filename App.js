@@ -1,5 +1,3 @@
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View, TextInput, Button, Alert } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
@@ -8,7 +6,7 @@ import Chat from './components/Chat';
 
 const navigator = createStackNavigator({
   Start: { screen: Start },
-  Chat: { screen: Chat }
+  Chat: { screen: Chat },
 });
 
 const navigatorContainer = createAppContainer(navigator);
