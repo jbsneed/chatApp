@@ -20,21 +20,21 @@ For information on how to set up an emulator for testing, visit [here](https://d
 
 ### Required Dependencies
 --------
-    * "expo",
-    * "expo-image-picker",
-    * "expo-location",
-    * "expo-permissions",
-    * "firebase",
-    * "react",
-    * "react-dom",
-    * "react-native",
-    * "react-native-gesture-handler",
-    * "react-native-gifted-chat",
-    * "react-native-keyboard-spacer",
-    * "react-native-maps",
-    * "react-native-web",
-    * "react-navigation",
-    * "react-navigation-stack"
+*  "expo",
+* "expo-image-picker",
+* "expo-location",
+* "expo-permissions",
+* "firebase",
+* "react",
+* "react-dom",
+* "react-native",
+* "react-native-gesture-handler",
+* "react-native-gifted-chat",
+* "react-native-keyboard-spacer",
+* "react-native-maps",
+* "react-native-web",
+* "react-navigation",
+* "react-navigation-stack"
 
 ### Libraries Used
 --------
