@@ -3,7 +3,7 @@
 ChatApp allows users to send and receive text messages, photos, and locations. 
 
 # Get Started
-----
+--------
 
 To run, install expo in your project folder:
 **npm install expo-cli -g**
@@ -19,29 +19,29 @@ For information on how to set up an emulator for testing, visit [here](https://d
 
 
 ### Required Dependencies
--------------
-   - "expo",
-    - "expo-image-picker",
-    - "expo-location",
-    - "expo-permissions",
-    - "firebase",
-    - "react",
-    - "react-dom",
-    - "react-native",
-    - "react-native-gesture-handler",
-    - "react-native-gifted-chat",
-    - "react-native-keyboard-spacer",
-    - "react-native-maps",
-    - "react-native-web",
-    - "react-navigation",
-    - "react-navigation-stack"
+--------
+    * "expo",
+    * "expo-image-picker",
+    * "expo-location",
+    * "expo-permissions",
+    * "firebase",
+    * "react",
+    * "react-dom",
+    * "react-native",
+    * "react-native-gesture-handler",
+    * "react-native-gifted-chat",
+    * "react-native-keyboard-spacer",
+    * "react-native-maps",
+    * "react-native-web",
+    * "react-navigation",
+    * "react-navigation-stack"
 
 ### Libraries Used
------
-- [GiftedChat](https://github.com/FaridSafi/react-native-gifted-chat)
+--------
+* [GiftedChat](https://github.com/FaridSafi/react-native-gifted-chat)
 
 ### Trello Board
-------
+--------
 [Trello - Chat App](https://trello.com/b/nn7Eninm/chat-app)
 
 
